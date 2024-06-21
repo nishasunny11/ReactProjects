@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-image: url("weather.jpg");
+        background-repeat: no-repeat;
+        background-size: 1700px 800px;
+        color: white;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        width: 200px;
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #0072ff;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #005bb5;
+      }
+
+      .weather-info {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 50px;
+        border-radius: 10px;
+        margin: 30px;
+        width: 30%;
+        display: none; /* Initially hidden */
+      }
+
+      h1, h3, h4, h5, p {
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <input type="text" id="text-box" placeholder="Enter city name" />
+      <button id="btn1">Check Weather</button>
+      <div class="weather-info" id="weather-info">
+        <h3 id="city"></h3><br/>
+        <p id="date"></p><br/>
+        <h1 id="temp"></h1><br/>
+        <h4 id="climate"></h4><br/>
+        <h5 id="min-max"></h5><br/>
+      </div>
+    </div>
+    <script>
+      let input1 = document.getElementById("text-box");
+      let button1 = document.getElementById("btn1");
+      let city = document.getElementById("city");
+      let temperature = document.getElementById("temp");
+      let date = document.getElementById("date");
+      let climate = document.getElementById("climate");
+      let min_max = document.getElementById("min-max");
+      let weatherInfo = document.getElementById("weather-info");
+
+      const api = {
+        key: "7e3f21edee540e6110af347b55eb1ab2",
+        base: "https://api.openweathermap.org/data/2.5/",
+      };
+
+      async function getData() {
+        try {
+          let query = input1.value;
+          let response = await fetch(`${api.base}weather?q=${query}&units=metric&appid=${api.key}`);
+          if (!response.ok) {
+            console.log("URL is not found");
+            return;
+          }
+          let data = await response.json();
+          city.innerHTML = `${data.name}, ${data.sys.country}`;
+          temperature.innerHTML = `${Math.round(data.main.temp)} &deg;C`;
+          climate.innerHTML = data.weather[0].description;
+          min_max.innerHTML = `Min: ${Math.round(data.main.temp_min)} &deg;C / Max: ${Math.round(data.main.temp_max)} &deg;C`;
+
+          let now = new Date();
+          date.innerHTML = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+
+          weatherInfo.style.display = "block"; // Show the weather info div
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      button1.addEventListener("click", getData);
+    </script>
+  </body>
+</html>
